@@ -23,6 +23,7 @@
     <!-- This section is empty now, we will add modules like 'config-server', 'user-service' here later -->
     <modules>
         <!-- <module>config-server</module> -->
+        <module>config-server</module>
         <!-- <module>discovery-server</module> -->
         <!-- ... and so on -->
     </modules>
