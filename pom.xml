@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion> <!-- Specifies the POM model version (always 4.0.0) -->
+
+    <!-- Basic Project Information -->
+    <groupId>com.food.delivery</groupId> <!-- Usually your company/organization domain reversed -->
+    <artifactId>food-delivery-system</artifactId> <!-- The name of this specific project -->
+    <version>0.0.1-SNAPSHOT</version> <!-- Project version (SNAPSHOT means it's under development) -->
+    <packaging>pom</packaging> <!-- VERY IMPORTANT: 'pom' means this is a parent/aggregator project, not a runnable JAR -->
+    <name>Food Delivery System - Parent</name>
+    <description>Parent project for the Food Delivery Microservices</description>
+
+    <!-- Properties: Define variables to reuse, especially for versions -->
+    <properties>
+        <java.version>17</java.version> <!-- We plan to use Java 17 -->
+        <spring-boot.version>3.1.5</spring-boot.version> <!-- The exact Spring Boot version we'll use -->
+        <spring-cloud.version>2022.0.4</spring-cloud.version> <!-- The exact Spring Cloud version compatible with Boot 3.1.x -->
+        <lombok.version>1.18.30</lombok.version> <!-- Version for a helper library (Lombok) -->
+    </properties>
+
+    <!-- Modules: Lists the sub-projects (microservices) that belong to this parent -->
+    <!-- This section is empty now, we will add modules like 'config-server', 'user-service' here later -->
+    <modules>
+        <!-- <module>config-server</module> -->
+        <!-- <module>discovery-server</module> -->
+        <!-- ... and so on -->
+    </modules>
+
+    <!-- Dependency Management: Defines versions for dependencies used by child modules -->
+    <!-- Child modules can declare a dependency WITHOUT specifying the version; it's inherited from here -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot Bill of Materials (BOM): Imports recommended versions for Spring Boot libraries -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version> <!-- Uses the version defined in properties -->
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring Cloud Bill of Materials (BOM): Imports recommended versions for Spring Cloud libraries -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version> <!-- Uses the version defined in properties -->
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Lombok (Optional but helpful): Reduces boilerplate code -->
+             <dependency>
+                 <groupId>org.projectlombok</groupId>
+                 <artifactId>lombok</artifactId>
+                 <version>${lombok.version}</version> <!-- Uses the version defined in properties -->
+                 <scope>provided</scope> <!-- 'provided' means it's needed for compilation but not included in the final JAR -->
+             </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Build Configuration -->
+    <build>
+        <!-- Plugin Management: Defines versions/config for Maven plugins used by child modules -->
+        <pluginManagement>
+            <plugins>
+                <!-- Spring Boot Maven Plugin: Helps package and run Spring Boot apps -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version> <!-- Uses the version defined in properties -->
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
