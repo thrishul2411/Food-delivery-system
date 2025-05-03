@@ -24,7 +24,7 @@
     <modules>
         <module>config-server</module>
         <module>discovery-server</module>
-        <!-- ... and so on -->
+        <module>api-gateway</module>
     </modules>
 
     <!-- Dependency Management: Defines versions for dependencies used by child modules -->
