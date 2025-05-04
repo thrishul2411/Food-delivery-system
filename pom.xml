@@ -26,6 +26,7 @@
         <module>discovery-server</module>
         <module>api-gateway</module>
         <module>user-service</module>
+        <module>restaurant-service</module>
     </modules>
 
     <!-- Dependency Management: Defines versions for dependencies used by child modules -->
