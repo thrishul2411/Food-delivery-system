@@ -77,6 +77,11 @@
             <artifactId>spring-cloud-stream-test-binder</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+            <!-- Version is managed by the Spring Cloud BOM imported in your parent POM -->
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

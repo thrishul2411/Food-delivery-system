@@ -5,10 +5,14 @@ import com.food.delivery.orderservice.dto.*;
 import com.food.delivery.orderservice.entity.Order;
 import com.food.delivery.orderservice.entity.OrderItem;
 import com.food.delivery.orderservice.repository.OrderRepository;
-import jakarta.transaction.Transactional; // Use jakarta.transactional or Spring's
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.food.delivery.orderservice.event.PaymentOutcomeEvent;
+import org.springframework.context.annotation.Bean;
+import org.springframework.transaction.annotation.Transactional; // Or jakarta.transactional
+import java.util.function.Consumer;
+import java.util.Optional; // Make sure Optional is imported
+import com.food.delivery.orderservice.entity.Order;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -126,5 +130,63 @@ public class OrderServiceImpl { // Renamed for convention
         return orderRepository.findByUserId(userId).stream()
                 .map(this::mapOrderToResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    // Spring Cloud Stream finds this @Bean and links it to the 'paymentOutcomeConsumer-in-0' binding
+    // defined in application properties because the bean name matches the function definition.
+    @Bean
+    public Consumer<PaymentOutcomeEvent> paymentOutcomeConsumer() {
+        return event -> {
+            // Log that an event was received
+            System.out.println("ORDER-SERVICE: Received PaymentOutcomeEvent: " + event);
+
+            // Find the order mentioned in the event
+            Optional<Order> optionalOrder = orderRepository.findById(event.getOrderId());
+
+            // Process only if the order exists
+            if (optionalOrder.isPresent()) {
+                Order order = optionalOrder.get();
+
+                // Check current order status to prevent overwriting a later status
+                // Example: Only process if PENDING_PAYMENT or RECEIVED (adjust as needed)
+                // This avoids applying a FAILED status if the order was already DELIVERED, for example.
+                List<String> processableStatus = Arrays.asList("PENDING_PAYMENT", "RECEIVED"); // Define states where payment outcome is relevant
+
+                if (processableStatus.contains(order.getStatus())) {
+                    // Use a separate transactional method for the database update
+                    updateOrderStatusBasedOnPayment(order, event);
+                } else {
+                    System.out.println("ORDER-SERVICE: Order " + order.getId() +
+                            " not in processable state for payment outcome (current: " +
+                            order.getStatus() + "). Ignoring event.");
+                }
+            } else {
+                // Log an error if the order ID from the event doesn't exist
+                System.err.println("ORDER-SERVICE: Received payment event for unknown order ID: " + event.getOrderId());
+                // Future: Consider adding to a dead-letter queue or alerting mechanism
+            }
+        };
+    }
+
+    // --- NEW: Transactional Method to Update Order Status ---
+    // Separating the DB logic makes transactions clearer
+    @Transactional
+    public void updateOrderStatusBasedOnPayment(Order order, PaymentOutcomeEvent event) {
+        System.out.println("ORDER-SERVICE: Updating status for order ID: " + order.getId() + " based on payment status: " + event.getStatus());
+        if ("SUCCESSFUL".equalsIgnoreCase(event.getStatus())) {
+            // Define what happens on successful payment
+            // Options: CONFIRMED, PREPARING, READY_FOR_PICKUP?
+            // Let's set it to PREPARING for now.
+            order.setStatus("PREPARING");
+            System.out.println("ORDER-SERVICE: Set status to PREPARING for order " + order.getId());
+            // TODO: In a later step, PUBLISH an OrderPaid or OrderReadyForPreparation event here.
+        } else { // FAILED or any other non-successful status
+            order.setStatus("PAYMENT_FAILED");
+            System.out.println("ORDER-SERVICE: Set status to PAYMENT_FAILED for order " + order.getId());
+            // TODO: Potentially publish an OrderCancelled event or trigger notification.
+        }
+        // Save the updated order status
+        orderRepository.save(order);
+        System.out.println("ORDER-SERVICE: Order " + order.getId() + " saved with status " + order.getStatus());
     }
 }
