@@ -9,6 +9,7 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class DriverService {
@@ -79,5 +80,14 @@ public class DriverService {
                 .build();
         driverProfileRepository.save(profile);
         System.out.println("DRIVER-SERVICE: Created profile for driver " + driverId);
+    }
+
+    public List<DriverProfile> findAvailableDrivers() {
+        // Simple implementation for now
+        // TODO: Add location filtering later
+        System.out.println("DRIVER-SERVICE: Finding available drivers...");
+        List<DriverProfile> available = driverProfileRepository.findByAvailableTrue();
+        System.out.println("DRIVER-SERVICE: Found " + available.size() + " available drivers.");
+        return available;
     }
 }

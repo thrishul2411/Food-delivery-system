@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional; // Or jakarta.t
 import java.util.function.Consumer;
 import java.util.Optional; // Make sure Optional is imported
 import com.food.delivery.orderservice.entity.Order;
+import org.springframework.cloud.stream.function.StreamBridge;
+import com.food.delivery.orderservice.event.publisher.OrderReadyForPickupEvent; // Correct import
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -27,6 +29,11 @@ public class OrderServiceImpl { // Renamed for convention
 
     @Autowired
     private RestaurantServiceClient restaurantServiceClient;
+
+    @Autowired
+    private StreamBridge streamBridge; // Inject StreamBridge
+
+    private static final String ORDER_READY_BINDING_NAME = "orderReadySupplier-out-0";
 
     // Simple DTO Mapper (Consider MapStruct later)
     private OrderResponseDTO mapOrderToResponseDTO(Order order) {
@@ -169,23 +176,50 @@ public class OrderServiceImpl { // Renamed for convention
     }
 
     // --- NEW: Transactional Method to Update Order Status ---
-    // Separating the DB logic makes transactions clearer
+//    // Separating the DB logic makes transactions clearer
+//    @Transactional
+//    public void updateOrderStatusBasedOnPayment(Order order, PaymentOutcomeEvent event) {
+//        System.out.println("ORDER-SERVICE: Updating status for order ID: " + order.getId() + " based on payment status: " + event.getStatus());
+//        if ("SUCCESSFUL".equalsIgnoreCase(event.getStatus())) {
+//            // Define what happens on successful payment
+//            // Options: CONFIRMED, PREPARING, READY_FOR_PICKUP?
+//            // Let's set it to PREPARING for now.
+//            order.setStatus("PREPARING");
+//            System.out.println("ORDER-SERVICE: Set status to PREPARING for order " + order.getId());
+//            // TODO: In a later step, PUBLISH an OrderPaid or OrderReadyForPreparation event here.
+//        } else { // FAILED or any other non-successful status
+//            order.setStatus("PAYMENT_FAILED");
+//            System.out.println("ORDER-SERVICE: Set status to PAYMENT_FAILED for order " + order.getId());
+//            // TODO: Potentially publish an OrderCancelled event or trigger notification.
+//        }
+//        // Save the updated order status
+//        orderRepository.save(order);
+//        System.out.println("ORDER-SERVICE: Order " + order.getId() + " saved with status " + order.getStatus());
+//    }
+
     @Transactional
     public void updateOrderStatusBasedOnPayment(Order order, PaymentOutcomeEvent event) {
         System.out.println("ORDER-SERVICE: Updating status for order ID: " + order.getId() + " based on payment status: " + event.getStatus());
+        String previousStatus = order.getStatus(); // Store previous status if needed
+
         if ("SUCCESSFUL".equalsIgnoreCase(event.getStatus())) {
-            // Define what happens on successful payment
-            // Options: CONFIRMED, PREPARING, READY_FOR_PICKUP?
-            // Let's set it to PREPARING for now.
-            order.setStatus("PREPARING");
+            order.setStatus("PREPARING"); // Set status to PREPARING
             System.out.println("ORDER-SERVICE: Set status to PREPARING for order " + order.getId());
-            // TODO: In a later step, PUBLISH an OrderPaid or OrderReadyForPreparation event here.
-        } else { // FAILED or any other non-successful status
+
+            // *** PUBLISH OrderReadyForPickupEvent ***
+            OrderReadyForPickupEvent readyEvent = OrderReadyForPickupEvent.builder()
+                    .orderId(order.getId())
+                    .restaurantId(order.getRestaurantId())
+                    // Add restaurant location details if available/needed
+                    .build();
+            System.out.println("ORDER-SERVICE: Publishing event to binding [" + ORDER_READY_BINDING_NAME + "]: " + readyEvent);
+            streamBridge.send(ORDER_READY_BINDING_NAME, readyEvent);
+            // ****************************************
+
+        } else {
             order.setStatus("PAYMENT_FAILED");
             System.out.println("ORDER-SERVICE: Set status to PAYMENT_FAILED for order " + order.getId());
-            // TODO: Potentially publish an OrderCancelled event or trigger notification.
         }
-        // Save the updated order status
         orderRepository.save(order);
         System.out.println("ORDER-SERVICE: Order " + order.getId() + " saved with status " + order.getStatus());
     }

@@ -2,12 +2,15 @@ package com.food.delivery.driverservice.controller;
 
 import com.food.delivery.driverservice.dto.AvailabilityRequest;
 import com.food.delivery.driverservice.dto.LocationRequest;
+import com.food.delivery.driverservice.entity.DriverProfile;
 import com.food.delivery.driverservice.service.DriverService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/drivers")
@@ -54,6 +57,20 @@ public class DriverController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Profile created for driver " + driverId);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error creating dummy profile: " + e.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DriverProfile>> getDrivers(
+            @RequestParam(name = "available", required = false) Boolean available) {
+
+        if (Boolean.TRUE.equals(available)) { // Check if parameter is present and true
+            List<DriverProfile> drivers = driverService.findAvailableDrivers();
+            return ResponseEntity.ok(drivers);
+        } else {
+            // Optional: Implement fetching all drivers or return error/empty list
+            // For now, only support fetching available=true
+            return ResponseEntity.badRequest().body(null); // Or return empty list: ResponseEntity.ok(Collections.emptyList());
         }
     }
 }
