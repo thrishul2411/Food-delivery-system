@@ -3,12 +3,12 @@ package com.food.delivery.orderservice.dto;
 import lombok.Data;
 import java.math.BigDecimal;
 
-@Data // Lombok
+@Data
 public class MenuItemDTO {
     private Long id;
     private String name;
     private BigDecimal price;
-    // Add any other fields needed for validation/order creation
+
 
 
     public Long getId() {

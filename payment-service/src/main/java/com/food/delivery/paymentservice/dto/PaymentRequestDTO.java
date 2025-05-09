@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 @Data
 public class PaymentRequestDTO {
     private Long orderId;
-    private BigDecimal amount; // Ideally, get amount from Order Service or recalculate
-    private String currency; // e.g., "USD"
-    // Add payment method details later (e.g., card token)
+    private BigDecimal amount;
+    private String currency;
+
 
 
     public Long getOrderId() {

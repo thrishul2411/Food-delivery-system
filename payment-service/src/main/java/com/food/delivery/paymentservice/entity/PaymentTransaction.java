@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder // Lombok Builder pattern
+@Builder
 public class PaymentTransaction {
 
     @Id
@@ -22,22 +22,22 @@ public class PaymentTransaction {
     @Column(name = "transaction_id")
     private Long id;
 
-    @Column(name = "order_id", nullable = false, unique = true) // Assuming one payment attempt per order for now
+    @Column(name = "order_id", nullable = false, unique = true)
     private Long orderId;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(length = 3) // e.g., "USD", "EUR"
+    @Column(length = 3)
     private String currency;
 
-    @Column(nullable = false, length = 20) // e.g., PENDING, SUCCESSFUL, FAILED
+    @Column(nullable = false, length = 20)
     private String status;
 
-    @Column(length = 50) // e.g., "STRIPE", "PAYPAL", "MOCK"
+    @Column(length = 50)
     private String provider;
 
-    @Column(name = "provider_transaction_id") // ID from the external payment system
+    @Column(name = "provider_transaction_id")
     private String providerTransactionId;
 
     @Column(name = "created_at", updatable = false)
@@ -51,7 +51,7 @@ public class PaymentTransaction {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         if (status == null) {
-            status = "PENDING"; // Default status on creation
+            status = "PENDING";
         }
     }
 

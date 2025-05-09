@@ -6,12 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository // Marks this as a Spring Data repository bean
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> { // <EntityType, PrimaryKeyType>
 
-    // Spring Data JPA automatically creates method implementations based on the method name
-    // Example: Find a user by their email address
     Optional<User> findByEmail(String email);
 
-    // Add other custom query methods here if needed later
 }

@@ -15,15 +15,14 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Long id;
 
-    // Many OrderItems belong to One Order
-    @ManyToOne(fetch = FetchType.LAZY) // Lazy fetch is generally preferred
-    @JoinColumn(name = "order_id", nullable = false) // Foreign key column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(name = "item_id", nullable = false) // ID from Restaurant Service
+    @Column(name = "item_id", nullable = false)
     private Long menuItemId;
 
-    @Column(name = "item_name", nullable = false) // Store name snapshot
+    @Column(name = "item_name", nullable = false)
     private String itemName;
 
     @Column(nullable = false)

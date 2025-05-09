@@ -29,9 +29,9 @@ public class Order {
     private BigDecimal totalAmount;
 
     @Column(nullable = false)
-    private String status; // e.g., PENDING_PAYMENT, RECEIVED, PREPARING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED
+    private String status;
 
-    @Column(name = "delivery_address_snapshot", columnDefinition = "TEXT") // Store address as text/JSON
+    @Column(name = "delivery_address_snapshot", columnDefinition = "TEXT")
     private String deliveryAddressSnapshot;
 
     @Column(name = "created_at", updatable = false)
@@ -40,10 +40,7 @@ public class Order {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // One Order has Many OrderItems
-    // CascadeType.ALL: If order is saved/deleted, items are too.
-    // orphanRemoval=true: If an item is removed from the list, it's deleted from DB.
-    // mappedBy="order": Links to the 'order' field in OrderItem entity.
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> items = new ArrayList<>();
 
@@ -58,10 +55,9 @@ public class Order {
         updatedAt = LocalDateTime.now();
     }
 
-    // Helper method to add items consistently
     public void addItem(OrderItem item) {
         items.add(item);
-        item.setOrder(this); // Set bidirectional link
+        item.setOrder(this);
     }
 
     public Long getId() {

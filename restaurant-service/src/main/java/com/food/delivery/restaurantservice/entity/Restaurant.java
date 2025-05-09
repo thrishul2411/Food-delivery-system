@@ -25,9 +25,8 @@ public class Restaurant {
     private String address;
     @Column(name = "cuisine_type")
     private String cuisineType;
-    // Add avg_rating, image_url later
 
-    // Example constructor
+
     public Restaurant(String name, String description, String address, String cuisineType) {
         this.name = name;
         this.description = description;

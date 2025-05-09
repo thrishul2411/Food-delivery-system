@@ -8,8 +8,6 @@ import java.util.List;
 @Repository
 public interface DriverProfileRepository extends JpaRepository<DriverProfile, Long> { // ID is Long (driverId)
 
-    // Find available drivers (useful for delivery service later)
     List<DriverProfile> findByAvailableTrue();
 
-    // Add methods to f ind drivers within a certain geographical area later
 }

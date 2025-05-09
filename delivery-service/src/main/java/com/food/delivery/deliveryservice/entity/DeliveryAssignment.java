@@ -26,7 +26,6 @@ public class DeliveryAssignment {
     @Column(name = "driver_id", nullable = false)
     private Long driverId;
 
-    // Status: e.g., ASSIGNED, PICKED_UP, DELIVERED, FAILED_DELIVERY
     @Column(nullable = false, length = 30)
     private String status;
 

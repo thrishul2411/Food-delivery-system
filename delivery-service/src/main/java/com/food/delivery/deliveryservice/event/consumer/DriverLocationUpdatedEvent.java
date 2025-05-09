@@ -1,5 +1,5 @@
-package com.food.delivery.deliveryservice.event.consumer; // Adjust package if needed
-// ... (identical content as in driver-service) ...
+package com.food.delivery.deliveryservice.event.consumer;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

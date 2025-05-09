@@ -1,4 +1,4 @@
-package com.food.delivery.orderservice.event; // Make sure package exists
+package com.food.delivery.orderservice.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class PaymentOutcomeEvent {
     private Long orderId;
-    private String status; // "SUCCESSFUL" or "FAILED"
+    private String status;
     private Long transactionId;
     private BigDecimal amount;
     private String failureReason;

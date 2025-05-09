@@ -2,12 +2,11 @@ package com.food.delivery.orderservice.dto;
 
 import lombok.Data;
 import java.util.List;
-import java.util.Map;
+
 
 @Data
 public class OrderRequestDTO {
-    // Assuming user ID comes from JWT/Security Context later
-    // private Long userId;
+
     private Long restaurantId;
     private List<OrderItemRequestDTO> items;
     private String deliveryAddress; // Simple string for now

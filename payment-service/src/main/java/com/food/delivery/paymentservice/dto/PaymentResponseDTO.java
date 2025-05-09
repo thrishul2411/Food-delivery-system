@@ -13,11 +13,11 @@ import java.math.BigDecimal;
 public class PaymentResponseDTO {
     private Long transactionId;
     private Long orderId;
-    private String status; // PENDING, SUCCESSFUL, FAILED
+    private String status;
     private BigDecimal amount;
     private String currency;
-    private String message; // e.g., "Payment initiated", "Payment successful"
-    private String paymentGatewayUrl; // Placeholder for redirecting user
+    private String message;
+    private String paymentGatewayUrl;
 
     public Long getTransactionId() {
         return transactionId;

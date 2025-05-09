@@ -15,7 +15,7 @@ public class OrderResponseDTO {
     private String deliveryAddressSnapshot;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<OrderItemResponseDTO> items; // Include item details
+    private List<OrderItemResponseDTO> items;
 
     public Long getId() {
         return id;

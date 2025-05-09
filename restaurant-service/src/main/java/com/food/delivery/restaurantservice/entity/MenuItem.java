@@ -20,18 +20,17 @@ public class MenuItem {
     @Column(name = "item_id")
     private Long id;
 
-    @Column(name = "restaurant_id", nullable = false) // Store restaurant ID directly for now
-    private Long restaurantId; // Later, can be @ManyToOne mapping
+    @Column(name = "restaurant_id", nullable = false)
+    private Long restaurantId;
 
     @Column(nullable = false)
     private String name;
     private String description;
 
-    @Column(nullable = false, precision = 10, scale = 2) // For currency
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
-    // Add category, image_url later
 
-    // Example constructor
+
     public MenuItem(Long restaurantId, String name, String description, BigDecimal price) {
         this.restaurantId = restaurantId;
         this.name = name;

@@ -19,37 +19,34 @@ public class DriverController {
     @Autowired
     private DriverService driverService;
 
-    // PUT /api/drivers/{driverId}/availability
     @PutMapping("/{driverId}/availability")
     public ResponseEntity<?> updateAvailability(@PathVariable Long driverId, @RequestBody AvailabilityRequest request) {
         try {
             driverService.updateAvailability(driverId, request.isAvailable());
-            return ResponseEntity.noContent().build(); // HTTP 204 No Content on success
+            return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build(); // HTTP 404 Not Found
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             System.err.println("Error updating availability for driver " + driverId + ": " + e.getMessage());
             return ResponseEntity.internalServerError().body("Error updating availability.");
         }
     }
 
-    // PUT /api/drivers/{driverId}/location
     @PutMapping("/{driverId}/location")
     public ResponseEntity<?> updateLocation(@PathVariable Long driverId, @RequestBody LocationRequest request) {
         try {
             driverService.updateLocation(driverId, request.getLatitude(), request.getLongitude());
-            return ResponseEntity.noContent().build(); // HTTP 204 No Content
+            return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build(); // HTTP 404
+            return ResponseEntity.notFound().build();
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage()); // HTTP 400 for bad coords
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             System.err.println("Error updating location for driver " + driverId + ": " + e.getMessage());
             return ResponseEntity.internalServerError().body("Error updating location.");
         }
     }
 
-    // POST /api/drivers/dummy/{driverId} - Helper to create a profile for testing
     @PostMapping("/dummy/{driverId}")
     public ResponseEntity<?> createDummyProfile(@PathVariable Long driverId, @RequestParam(defaultValue = "Test Car - XYZ 789") String vehicle) {
         try {
@@ -64,13 +61,12 @@ public class DriverController {
     public ResponseEntity<List<DriverProfile>> getDrivers(
             @RequestParam(name = "available", required = false) Boolean available) {
 
-        if (Boolean.TRUE.equals(available)) { // Check if parameter is present and true
+        if (Boolean.TRUE.equals(available)) {
             List<DriverProfile> drivers = driverService.findAvailableDrivers();
             return ResponseEntity.ok(drivers);
         } else {
-            // Optional: Implement fetching all drivers or return error/empty list
-            // For now, only support fetching available=true
-            return ResponseEntity.badRequest().body(null); // Or return empty list: ResponseEntity.ok(Collections.emptyList());
+
+            return ResponseEntity.badRequest().body(null);
         }
     }
 }

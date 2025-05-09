@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
-    // Example: Find by cuisine type (Spring Data generates query)
+
     List<Restaurant> findByCuisineTypeContainingIgnoreCase(String cuisine);
-    // Add search methods later
+
 }

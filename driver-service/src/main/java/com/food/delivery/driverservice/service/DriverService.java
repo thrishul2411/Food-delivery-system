@@ -22,7 +22,6 @@ public class DriverService {
 
     private static final String DRIVER_LOCATION_BINDING_NAME = "driverLocationSupplier-out-0";
 
-    // --- Availability ---
     @Transactional
     public void updateAvailability(Long driverId, boolean available) {
         DriverProfile profile = driverProfileRepository.findById(driverId)
@@ -35,14 +34,13 @@ public class DriverService {
         // TODO: Optionally publish DriverAvailabilityChangedEvent if needed by other services
     }
 
-    // --- Location Update ---
     @Transactional
     public void updateLocation(Long driverId, Double latitude, Double longitude) {
-        // Basic validation
+
         if (latitude == null || longitude == null) {
             throw new IllegalArgumentException("Latitude and Longitude cannot be null.");
         }
-        // Add more validation for coordinate ranges if necessary
+
 
         DriverProfile profile = driverProfileRepository.findById(driverId)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverId));
@@ -54,7 +52,6 @@ public class DriverService {
         driverProfileRepository.save(profile);
         System.out.println("DRIVER-SERVICE: Updated location for driver " + driverId + " to [" + latitude + "," + longitude + "]");
 
-        // Create and publish location update event
         DriverLocationUpdatedEvent event = DriverLocationUpdatedEvent.builder()
                 .driverId(driverId)
                 .latitude(latitude)
@@ -66,8 +63,6 @@ public class DriverService {
         streamBridge.send(DRIVER_LOCATION_BINDING_NAME, event);
     }
 
-    // TODO: Add method to create initial DriverProfile (maybe triggered by user service event)
-    // For now, we'll insert manually or assume profiles exist.
     public void createDriverProfile(Long driverId, String vehicleDetails) {
         if(driverProfileRepository.existsById(driverId)) {
             System.out.println("DRIVER-SERVICE: Profile for driver " + driverId + " already exists.");
@@ -76,15 +71,14 @@ public class DriverService {
         DriverProfile profile = DriverProfile.builder()
                 .driverId(driverId)
                 .vehicleDetails(vehicleDetails)
-                .available(false) // Default offline
+                .available(false)
                 .build();
         driverProfileRepository.save(profile);
         System.out.println("DRIVER-SERVICE: Created profile for driver " + driverId);
     }
 
     public List<DriverProfile> findAvailableDrivers() {
-        // Simple implementation for now
-        // TODO: Add location filtering later
+
         System.out.println("DRIVER-SERVICE: Finding available drivers...");
         List<DriverProfile> available = driverProfileRepository.findByAvailableTrue();
         System.out.println("DRIVER-SERVICE: Found " + available.size() + " available drivers.");

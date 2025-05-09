@@ -15,26 +15,24 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    private OrderServiceImpl orderService; // Use implementation
+    private OrderServiceImpl orderService;
 
-    // POST /api/orders - Create a new order
     @PostMapping
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO orderRequest) {
         try {
             OrderResponseDTO createdOrder = orderService.createOrder(orderRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
         } catch (IllegalArgumentException e) {
-            // Handle validation errors (e.g., item not found, bad quantity)
-            return ResponseEntity.badRequest().body(null); // Basic error handling
+
+            return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
-            // Handle other unexpected errors
-            System.err.println("Error creating order: " + e.getMessage()); // Log error
+
+            System.err.println("Error creating order: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    // GET /api/orders/{orderId} - Get order by ID
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long orderId) {
         return orderService.getOrderById(orderId)
@@ -42,7 +40,6 @@ public class OrderController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // GET /api/orders - Get orders for the current user (hardcoded user 1 for now)
     @GetMapping
     public ResponseEntity<List<OrderResponseDTO>> getCurrentUserOrders() {
         // TODO: Get actual userId from security context/JWT

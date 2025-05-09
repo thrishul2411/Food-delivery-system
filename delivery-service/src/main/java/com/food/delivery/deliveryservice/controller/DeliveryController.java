@@ -13,7 +13,6 @@ public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
 
-    // PUT /api/deliveries/{assignmentId}/status
     @PutMapping("/{assignmentId}/status")
     public ResponseEntity<?> updateDeliveryStatus(
             @PathVariable Long assignmentId,
@@ -29,5 +28,5 @@ public class DeliveryController {
         }
     }
 
-    // TODO: Add GET endpoint later to view assignment details if needed
+
 }
